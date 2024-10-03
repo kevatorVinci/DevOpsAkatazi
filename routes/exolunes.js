@@ -3,7 +3,7 @@ const router = express.Router();
 
 const Exolune = require('../models/Exolune.js');
 
-/* GET exolunes page. */
+/* GET exolunes page. test */
 router.get('/', (req, res) => {
     console.log("Je passe par la route /exolunes");
     res.render('exolunes/index.hbs', { exolunesList: Exolune.list() });
