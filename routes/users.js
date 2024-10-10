@@ -10,7 +10,7 @@ const validator = require('validator');
 /* form login / password */
 router.get('/', (req, res, next) => {
 
-    console.log("Kevin est con");
+    console.log("Ayoub est con");
 
     if (req.session.login) {
         res.redirect("/members");
