@@ -9,7 +9,9 @@ const validator = require('validator');
 
 /* form login / password */
 router.get('/', (req, res, next) => {
+
     console.log("Kevin est con");
+
     if (req.session.login) {
         res.redirect("/members");
     }
@@ -18,39 +20,27 @@ router.get('/', (req, res, next) => {
 
 /* check login and password */
 router.post('/login', (req, res, next) => {
-    console.log("USERS LOGIN");
-    // User in DB ? -> return the record of the user if found
-    const userFound = User.find(req.body.userLogin);
-    console.log("User found" + JSON.stringify(userFound));
+    const userFound = manageFoundUser(req);
     if (userFound) {
         if (userFound.active == false) {
-            req.session.errors = "Compte désactivé";
-            res.redirect('/users');
+            manageUserOff(req, res);
         }
         else {
             if (bcrypt.compareSync(req.body.userPassword, userFound.password)) {
-                console.log("password correct");
-                req.session.login = req.body.userLogin;
-                req.session.connected = true;
+                manageGoodPassword(req);
                 if (userFound.admin) {
-                    req.session.admin = true;
-                    res.redirect('/admin');
+                    manageGoodAdmin(req, res);
                 } else {
-                    req.session.admin = false;
-                    res.redirect('/members');
+                    manageWrongAdmin(req, res);
                 }
             }
             else {
-                console.log("bad password");
-                req.session.errors = "Mot de passe incorrect";
-                res.redirect('/users');
+                manageWrongPassword(req, res);
             }
         }
     }
     else {
-        console.log("bad user");
-        req.session.errors = "Utilisateur inconnu";
-        res.redirect('/users');
+        manageWrongUser(req, res);
     }
 });
 
@@ -96,3 +86,45 @@ router.post('/add', (req, res, next) => {
 });
 
 module.exports = router;
+
+function manageFoundUser(req) {
+    console.log("USERS LOGIN");
+    // User in DB ? -> return the record of the user if found
+    const userFound = User.find(req.body.userLogin);
+    console.log("User found" + JSON.stringify(userFound));
+    return userFound;
+}
+
+function manageUserOff(req, res) {
+    req.session.errors = "Compte désactivé";
+    res.redirect('/users');
+}
+
+function manageGoodPassword(req) {
+    console.log("password correct");
+    req.session.login = req.body.userLogin;
+    req.session.connected = true;
+}
+
+function manageGoodAdmin(req, res) {
+    req.session.admin = true;
+    res.redirect('/admin');
+}
+
+function manageWrongAdmin(req, res) {
+    req.session.admin = false;
+    res.redirect('/members');
+}
+
+function manageWrongPassword(req, res) {
+    console.log("bad password");
+    req.session.errors = "Mot de passe incorrect";
+    res.redirect('/users');
+}
+
+function manageWrongUser(req, res) {
+    console.log("bad user");
+    req.session.errors = "Utilisateur inconnu";
+    res.redirect('/users');
+}
+
