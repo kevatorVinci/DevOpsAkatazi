@@ -9,7 +9,7 @@ const validator = require('validator');
 
 /* form login / password */
 router.get('/', (req, res, next) => {
-    console.log("USERS INDEX");
+    console.log("Ayoub est con");
     if (req.session.login) {
         res.redirect("/members");
     }
@@ -125,3 +125,4 @@ function manageWrongUser(req, res) {
     req.session.errors = "Utilisateur inconnu";
     res.redirect('/users');
 }
+
